@@ -1,0 +1,19 @@
+name: Klipper-Moonraker Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3      
+    - name: Build the Docker image    
+      working-directory : ./klipper
+      run: DOCKER_BUILDKIT=1 docker build . --file Dockerfile --tag anetdev/klipper-moonraker:$(date +%s)

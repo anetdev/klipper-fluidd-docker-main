@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  klipper:
+    image: klipper-moonraker:latest
+    # build:
+    #   dockerfile: ./klipper/Dockerfile
+    #   context: .
+    # if klipper cannot connect to the printer check permissions on rpi then add the group here
+    # group_add:
+    #   - "996"
+    #   - "998"
+    privileged: true
+    cap_add:
+      - SYS_NICE
+    container_name: klipper
+    ports:
+      - 7125:7125
+    restart: unless-stopped
+    volumes:      
+      - klippy_config:/home/klippy/printer_data/config
+      - gcode_files:/home/klippy/printer_data/gcodes
+      - moonraker_data:/home/klippy/.moonraker_database
+      - /dev:/dev
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+
+
+  fluidd:
+    image: fluidd:latest    
+    restart: unless-stopped
+    container_name: fluidd
+    ports:
+      - 8010:80
+    depends_on: 
+      - klipper      
+    links:
+      - klipper:klipper
+      
+
+volumes: 
+  moonraker_data:
+  klippy_config:
+  gcode_files:
