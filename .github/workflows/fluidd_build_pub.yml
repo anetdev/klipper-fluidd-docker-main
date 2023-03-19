@@ -6,10 +6,10 @@ name: Build and Publish Fluidd
 on:
   schedule:
     - cron: '00 0 * * 6' #every Sat midnight
-  push:
-    branches: [ "master" ]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+  # push:
+  #   branches: [ "master" ]
+  #   # Publish semver tags as releases.
+  #   tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -64,8 +64,8 @@ jobs:
         with:
           context: ./frontend
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # tags: ${{ steps.meta.outputs.tags }}
+          # labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       # Sign the resulting Docker image digest except on PRs.

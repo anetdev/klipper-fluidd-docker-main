@@ -2,7 +2,7 @@ version: '2'
 
 services:
   klipper:
-    image: klipper-moonraker:latest
+    image: ghcr.io/anetdev/klipper-fluidd-docker-main/klipper-moonraker
     # build:
     #   dockerfile: ./klipper/Dockerfile
     #   context: .
@@ -27,7 +27,7 @@ services:
 
 
   fluidd:
-    image: fluidd:latest    
+    image: ghcr.io/anetdev/klipper-fluidd-docker-main/fluidd
     restart: unless-stopped
     container_name: fluidd
     ports:
