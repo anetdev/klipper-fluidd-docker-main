@@ -7,11 +7,11 @@ on:
   schedule:
     - cron: '00 0 * * 6' #every Sat midnight
   # push:
-  #   branches: [ "master" ]
+  #   branches: [ "main" ]
   #   # Publish semver tags as releases.
   #   tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 env:
   # Use docker.io for Docker Hub if empty
@@ -64,7 +64,7 @@ jobs:
         with:
           context: ./frontend
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
