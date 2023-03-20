@@ -86,11 +86,9 @@ FROM python:3.10-slim-bullseye as image
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y \
-    # systemd \
+    apt-get install -y \    
     curl \
-     git \
-    # gpiod \
+    git \    
     iproute2 \
     libcurl4-openssl-dev \
     libjpeg-dev \
@@ -98,22 +96,19 @@ RUN apt-get update && \
     libopenjp2-7 \
     libsodium-dev \
     libssl-dev \
-    libtiff5 \
-    # locales \
-    # rsync \
+    libtiff5 \    
     supervisor \
     libv4l-dev \
-    zlib1g-dev && \    
-    # sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
-    # locale-gen && \
+    zlib1g-dev \
+    python3-opencv \
+    x264         \
+    libx264-dev \
+    libwebp-dev && \
     # Clean up
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
-# ENV LC_ALL en_GB.UTF-8 
-# ENV LANG en_GB.UTF-8  
-# ENV LANGUAGE en_GB:en   
 
 ARG USER=klippy
 ARG HOME=/home/${USER}
@@ -169,13 +164,25 @@ COPY --chown=${USER}:${USER} --from=builder ${MOONRAKER_VENV_DIR} ${MOONRAKER_VE
 COPY --chown=${USER}:${USER} --chmod=700 config ${CONFIG_DIR}
 COPY --chown=${USER}:${USER} --chmod=700 run_in_venv /usr/local/bin/run_in_venv
 
-COPY supervisord.conf /etc/supervisord/conf.d/supervisord.conf
-COPY *.ini /etc/supervisord/
 
+#mjpg streamer
 COPY --chown=${USER}:${USER} --chmod=700 mjpgstreamer/index.html ${HOME}/www-mjpgstreamer/index.html
 COPY --chown=${USER}:${USER} --from=builder ${HOME}/mjpg-streamer ${HOME}/mjpg-streamer
 
-
 EXPOSE 8080
 
+#telegram-bot
+WORKDIR ${HOME}
+ARG TEL_BOT_VENV=${HOME}/moonraker-telegram-bot/moonraker-telegram-bot-env
+RUN git clone https://github.com/nlef/moonraker-telegram-bot.git
+WORKDIR ${HOME}/moonraker-telegram-bot
+RUN [ ! -d ${TEL_BOT_VENV} ] && python3 -m venv ${TEL_BOT_VENV}
+RUN ${TEL_BOT_VENV}/bin/pip install --no-cache-dir -r scripts/requirements.txt
+RUN ${TEL_BOT_VENV}/bin/pip install --no-cache-dir opencv-python
+RUN chown -R ${USER}:${USER} ${HOME}/moonraker-telegram-bot
+RUN chmod +x ${HOME}/moonraker-telegram-bot/bot/main.py
+
+COPY supervisord.conf /etc/supervisord/conf.d/supervisord.conf
+COPY supervisor/*.ini /etc/supervisord/
+# CMD [ "bash" ]
 CMD ["supervisord", "-c", "/etc/supervisord/conf.d/supervisord.conf"]
