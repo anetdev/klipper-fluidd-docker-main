@@ -30,6 +30,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      
+      - name: Downcase repo
+        run: echo IMG=$(echo ${{ env.IMAGE_NAME }} | tr '[:upper:]' '[:lower:]') >> $IMG
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -64,7 +67,7 @@ jobs:
         with:
           context: ./frontend
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMG }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
