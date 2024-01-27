@@ -160,7 +160,6 @@ COPY --chown=${USER}:${USER} --from=builder ${KLIPPER_VENV_DIR} ${KLIPPER_VENV_D
 COPY --chown=${USER}:${USER} --from=builder ${HOME}/moonraker ${HOME}/moonraker
 COPY --chown=${USER}:${USER} --from=builder ${MOONRAKER_VENV_DIR} ${MOONRAKER_VENV_DIR}
 
-
 COPY --chown=${USER}:${USER} --chmod=700 config ${CONFIG_DIR}
 COPY --chown=${USER}:${USER} --chmod=700 run_in_venv /usr/local/bin/run_in_venv
 
@@ -181,6 +180,16 @@ RUN ${TEL_BOT_VENV}/bin/pip install --no-cache-dir -r scripts/requirements.txt
 RUN ${TEL_BOT_VENV}/bin/pip install --no-cache-dir opencv-python
 RUN chown -R ${USER}:${USER} ${HOME}/moonraker-telegram-bot
 RUN chmod +x ${HOME}/moonraker-telegram-bot/bot/main.py
+
+#Klipper-Adaptive-Meshing-Purging
+WORKDIR ${HOME}
+RUN git clone https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging.git
+WORKDIR ${HOME}/Klipper-Adaptive-Meshing-Purging
+RUN cp -r Configuration ${CONFIG_DIR}/KAMP
+RUN cp Configuration/KAMP_Settings.cfg ${CONFIG_DIR}/KAMP_Settings.cfg
+RUN chown -R ${USER}:${USER} ${CONFIG_DIR}/KAMP
+RUN chown  ${USER}:${USER} ${CONFIG_DIR}/KAMP_Settings.cfg
+
 
 COPY supervisord.conf /etc/supervisord/conf.d/supervisord.conf
 COPY supervisor/*.ini /etc/supervisord/
