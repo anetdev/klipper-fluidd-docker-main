@@ -75,11 +75,11 @@ RUN ${MOONRAKER_VENV_DIR}/bin/pip install wheel gpiod && \
 RUN ${MOONRAKER_VENV_DIR}/bin/python -m compileall moonraker
 
 
-#webcam
-WORKDIR ${HOME}
-RUN git clone https://github.com/jacksonliam/mjpg-streamer.git
-RUN cd mjpg-streamer/mjpg-streamer-experimental && make
-RUN mv mjpg-streamer/mjpg-streamer-experimental/* mjpg-streamer && rm -rf mjpg-streamer/mjpg-streamer-experimental
+# #webcam
+# WORKDIR ${HOME}
+# RUN git clone https://github.com/jacksonliam/mjpg-streamer.git
+# RUN cd mjpg-streamer/mjpg-streamer-experimental && make
+# RUN mv mjpg-streamer/mjpg-streamer-experimental/* mjpg-streamer && rm -rf mjpg-streamer/mjpg-streamer-experimental
 
 FROM python:3.10-slim-bullseye as image
 
@@ -164,11 +164,11 @@ COPY --chown=${USER}:${USER} --chmod=700 config ${CONFIG_DIR}
 COPY --chown=${USER}:${USER} --chmod=700 run_in_venv /usr/local/bin/run_in_venv
 
 
-#mjpg streamer
-COPY --chown=${USER}:${USER} --chmod=700 mjpgstreamer/index.html ${HOME}/www-mjpgstreamer/index.html
-COPY --chown=${USER}:${USER} --from=builder ${HOME}/mjpg-streamer ${HOME}/mjpg-streamer
+# #mjpg streamer
+# COPY --chown=${USER}:${USER} --chmod=700 mjpgstreamer/index.html ${HOME}/www-mjpgstreamer/index.html
+# COPY --chown=${USER}:${USER} --from=builder ${HOME}/mjpg-streamer ${HOME}/mjpg-streamer
 
-EXPOSE 8080
+# EXPOSE 8080
 
 #telegram-bot
 WORKDIR ${HOME}
