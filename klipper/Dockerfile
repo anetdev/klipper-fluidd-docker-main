@@ -88,7 +88,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \    
     curl \
-    git \    
+    git \
+    ffmpeg \    
     iproute2 \
     libcurl4-openssl-dev \
     libjpeg-dev \
